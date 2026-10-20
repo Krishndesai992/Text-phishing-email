@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  phishshield:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: phishshield-ai
+    ports:
+      - "8050:8050"
+    environment:
+      - PORT=8050
+      - HOST=0.0.0.0
+    restart: unless-stopped
+    volumes:
+      - ./metrics_summary.json:/app/metrics_summary.json:ro

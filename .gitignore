@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Model & serialized bundles (reproducible via python train_and_cache.py)
+model_bundle.joblib
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs and temporary files
+*.log
+tmp/
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+.freebuff/
+
+# Local Environment Variables
+.env
+.env.local

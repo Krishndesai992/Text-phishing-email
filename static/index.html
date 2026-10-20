@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhishShield  — Phishing Email Detection & Threat Intelligence</title>
+  <meta name="description" content="State-of-the-art machine learning classification platform for detecting phishing emails using hybrid NLP TF-IDF and structural email properties.">
+  <meta name="theme-color" content="#020617">
+  <link rel="icon" type="image/png" href="images/favicon.png?v=3">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=3">
+</head>
+<body class="theme-dark">
+  <!-- Top Background Ambient Lighting -->
+  <div class="ambient-glow glow-cyan"></div>
+  <div class="ambient-glow glow-purple"></div>
+
+  <!-- Header -->
+  <header class="navbar" id="app-header">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <img src="images/logo.png" alt="" class="brand-logo">
+          <span class="pulse-indicator"></span>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">Phish <span class="brand-accent">Shield</span></h1>
+          <span class="brand-subtitle">Email Threat Intelligence</span>
+        </div>
+      </div>
+
+      <!-- System Controls -->
+      <div class="nav-controls">
+        <div class="system-status-chip is-loading" role="status" aria-live="polite">
+          <span class="status-dot"></span>
+          <span>Live Model Engine</span>
+          <span class="status-model-count" id="status-chip-text">Connecting…</span>
+        </div>
+        <button class="btn btn-outline btn-sm" id="btn-open-retrain" title="Model Management & Retraining">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>Retrain Model</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content" id="main-content">
+
+    <!-- ============================================================ -->
+    <!-- TAB 1: LIVE INSPECTOR                                         -->
+    <!-- ============================================================ -->
+    <section class="tab-pane active" id="pane-inspector" role="tabpanel">
+      <!-- Overview Banner -->
+      <div class="section-intro">
+        <div class="intro-text">
+          <div class="engine-capability">
+            <i class="fa-solid fa-microchip"></i>
+            <span>TF-IDF <b>+</b> Parallel Classifier Pipeline</span>
+            <span class="engine-capability-divider"></span>
+            <span class="engine-capability-detail">14 structural signals · Model ensemble</span>
+          </div>
+          <p class="section-desc">
+            Submit any suspicious email to vectorize text with TF-IDF and run parallel predictions across trained machine learning classifiers.
+          </p>
+        </div>
+      </div>
+
+      <div class="inspector-grid">
+        <!-- Input Panel -->
+        <div class="card glass-card input-panel">
+          <div class="card-header">
+            <div class="header-left">
+              <i class="fa-solid fa-envelope-open-text card-icon"></i>
+              <h3 class="card-title">Email Input</h3>
+            </div>
+            <!-- Input Mode Selector -->
+            <div class="mode-toggles">
+              <button class="mode-btn active" data-mode="composer" id="mode-composer">
+                <i class="fa-solid fa-pen-to-square"></i> Compose
+              </button>
+              <button class="mode-btn" data-mode="raw" id="mode-raw">
+                <i class="fa-solid fa-code"></i> Raw RFC822 / Text
+              </button>
+              <button class="mode-btn" data-mode="upload" id="mode-upload">
+                <i class="fa-solid fa-file-arrow-up"></i> Upload .eml
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <!-- Mode 1: Composer -->
+            <div class="mode-section" id="section-composer">
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="inp-sender" class="form-label">
+                    <i class="fa-solid fa-user-tag"></i> Sender (From)
+                  </label>
+                  <input type="text" id="inp-sender" class="form-control" placeholder="e.g. security-alert@paypal-update.com">
+                </div>
+                <div class="form-group flex-1">
+                  <label for="inp-recipient" class="form-label">
+                    <i class="fa-solid fa-envelope"></i> Recipient (To)
+                  </label>
+                  <input type="text" id="inp-recipient" class="form-control" placeholder="e.g. victim@corporate.com">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inp-subject" class="form-label">
+                  <i class="fa-solid fa-heading"></i> Subject
+                </label>
+                <input type="text" id="inp-subject" class="form-control" placeholder="e.g. URGENT: Your account has been locked. Verify immediately!">
+              </div>
+              <div class="form-group">
+                <div class="label-with-meta">
+                  <label for="inp-body" class="form-label">
+                    <i class="fa-solid fa-file-lines"></i> Email Body or HTML
+                  </label>
+                  <span class="char-count" id="body-char-count">0 characters</span>
+                </div>
+                <textarea id="inp-body" class="form-control code-font textarea-lg" rows="9" placeholder="Paste email content, message body, or HTML here..."></textarea>
+              </div>
+            </div>
+
+            <!-- Mode 2: Raw RFC822 -->
+            <div class="mode-section hidden" id="section-raw">
+              <div class="form-group">
+                <div class="label-with-meta">
+                  <label for="inp-raw" class="form-label">
+                    <i class="fa-solid fa-terminal"></i> Raw RFC-822 Email Headers & Body
+                  </label>
+                  <span class="char-count" id="raw-char-count">0 characters</span>
+                </div>
+                <textarea id="inp-raw" class="form-control code-font textarea-xl" rows="13" placeholder="From: ...&#10;To: ...&#10;Subject: ...&#10;Content-Type: text/html&#10;&#10;Email body..."></textarea>
+              </div>
+            </div>
+
+            <!-- Mode 3: File Upload -->
+            <div class="mode-section hidden" id="section-upload">
+              <div class="dropzone" id="email-dropzone">
+                <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+                <h4 class="dropzone-title">Drag & Drop .eml or .txt Email File</h4>
+                <p class="dropzone-desc">Supports standard MIME email messages exported from Outlook, Thunderbird, or Webmail</p>
+                <label for="file-input" class="btn btn-secondary btn-sm dropzone-btn">
+                  <i class="fa-solid fa-folder-open"></i> Browse Files
+                </label>
+                <input type="file" id="file-input" accept=".eml,.txt,.msg,.mbox" style="display: none;">
+                <div class="file-loaded-info hidden" id="file-loaded-info">
+                  <i class="fa-solid fa-file-circle-check text-success"></i>
+                  <span id="file-loaded-name">filename.eml</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-footer">
+              <div class="footer-left">
+                <button class="btn btn-ghost btn-sm" id="btn-clear-input" title="Reset all input fields">
+                  <i class="fa-solid fa-trash-can"></i> Clear
+                </button>
+                <button class="btn btn-ghost btn-sm" id="btn-paste-clipboard" title="Paste from clipboard">
+                  <i class="fa-solid fa-clipboard"></i> Paste
+                </button>
+              </div>
+              <button class="btn btn-primary btn-glow" id="btn-analyze">
+                <span class="spinner hidden" id="analyze-spinner"></span>
+                <i class="fa-solid fa-arrow-right" id="analyze-icon"></i>
+                <span id="analyze-btn-text">Inspect & Classify Email</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output / Diagnostic Panel -->
+        <div class="card glass-card output-panel" id="output-panel">
+          <div class="card-header">
+            <div class="header-left">
+              <i class="fa-solid fa-square-poll-vertical card-icon"></i>
+              <h3 class="card-title">Threat Assessment & Diagnostics</h3>
+            </div>
+            <span class="timestamp-tag"><span class="timestamp-dot"></span><span id="analysis-timestamp">Awaiting first scan</span></span>
+          </div>
+
+          <div class="card-body" id="analysis-results-container">
+            <!-- Empty State Placeholder -->
+            <div class="empty-state" id="analysis-empty-state">
+              <div class="empty-state-icon">
+                <i class="fa-solid fa-radar fa-spin" style="--fa-animation-duration: 12s;"></i>
+              </div>
+              <h4 class="empty-state-title">No Email Inspected Yet</h4>
+              <p class="empty-state-desc">
+                Select one of the quick test presets above or paste email content on the left to generate a comprehensive machine learning threat assessment.
+              </p>
+              <div class="empty-state-hints">
+                <span class="hint-pill"><i class="fa-solid fa-check text-cyan"></i> 14 Extracted Features</span>
+                <span class="hint-pill"><i class="fa-solid fa-check text-cyan"></i> 6 ML Models</span>
+                <span class="hint-pill"><i class="fa-solid fa-check text-cyan"></i> Red Flag Detection</span>
+              </div>
+            </div>
+
+            <!-- Real Results Container (hidden initially) -->
+            <div class="results-content hidden" id="results-content">
+              <!-- Top Verdict Card -->
+              <div class="verdict-banner" id="verdict-banner">
+                <div class="verdict-main">
+                  <div class="verdict-status-icon" id="verdict-status-icon">
+                  </div>
+                  <div class="verdict-meta">
+                    <div class="verdict-topline">
+                      <span class="threat-level-badge" id="threat-level-badge">CRITICAL RISK</span>
+                      <span class="consensus-tag" id="consensus-tag">6 of 6 Models Agree</span>
+                    </div>
+                    <h3 class="verdict-headline" id="verdict-headline">PHISHING DETECTED</h3>
+                    <p class="verdict-summary" id="verdict-summary">
+                      High probability of malicious intent. Structural heuristics and text NLP indicate social engineering.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Risk Gauge -->
+                <div class="risk-gauge-box">
+                  <div class="circular-progress" id="circular-progress">
+                    <svg class="progress-ring" width="110" height="110">
+                      <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="transparent" r="46" cx="55" cy="55"/>
+                      <circle class="progress-ring-bar" id="progress-ring-bar" stroke="#ef4444" stroke-width="8" stroke-dasharray="289" stroke-dashoffset="30" stroke-linecap="round" fill="transparent" r="46" cx="55" cy="55"/>
+                    </svg>
+                    <div class="progress-text">
+                      <span class="progress-value" id="risk-score-value">91%</span>
+                      <span class="progress-label">RISK</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Security Red Flags Callout -->
+              <div class="red-flags-section" id="red-flags-section">
+                <div class="sub-header">
+                  <h4 class="sub-title"><i class="fa-solid fa-flag text-danger"></i> Detected Security Red Flags</h4>
+                  <span class="flag-count-badge" id="flag-count-badge">3 Flags</span>
+                </div>
+                <div class="flags-list" id="flags-list">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- Multi-Classifier Consensus Matrix -->
+              <div class="models-grid-section">
+                <div class="sub-header">
+                  <h4 class="sub-title"><i class="fa-solid fa-network-wired text-cyan"></i> Multi-Model Consensus Breakdown</h4>
+                  <span class="meta-label">Trained on Hybrid (TF-IDF + Properties)</span>
+                </div>
+                <div class="models-cards-row" id="models-cards-row">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: RETRAINING & MODEL MANAGEMENT                          -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay hidden" id="retrain-modal">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <div class="header-left">
+          <i class="fa-solid fa-sliders text-cyan"></i>
+          <h3 class="modal-title">Model Management & Training Center</h3>
+        </div>
+        <button class="modal-close" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-info-box">
+          <p>You can re-train all 6 classifiers with custom dataset sizes directly from this dashboard. Training runs concurrently in the background without interrupting live scanning.</p>
+        </div>
+
+        <div class="form-group mt-4">
+          <label class="form-label" for="retrain-sample-size">
+            <i class="fa-solid fa-database"></i> Emails Per Category (Half Limit):
+          </label>
+          <div class="range-row">
+            <input type="range" id="retrain-sample-size" min="200" max="1000" step="100" value="400" class="form-range">
+            <span class="range-val" id="range-val-text">400 (800 total)</span>
+          </div>
+          <span class="form-help">Higher limits increase model diversity and generalization at the cost of training duration.</span>
+        </div>
+
+        <div class="retrain-progress-box hidden" id="retrain-progress-box">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="retrain-bar-fill" style="width: 0%;"></div>
+          </div>
+          <div class="progress-labels">
+            <span id="retrain-status-text">Starting training...</span>
+            <span id="retrain-pct-text">0%</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btn-cancel-retrain">Close</button>
+        <button class="btn btn-primary" id="btn-start-retrain">
+          <i class="fa-solid fa-play"></i> Start Re-training
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JavaScript -->
+  <script src="js/app.js?v=3"></script>
+</body>
+</html>
