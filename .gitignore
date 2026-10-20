@@ -39,3 +39,9 @@ desktop.ini
 # Local Environment Variables
 .env
 .env.local
+
+# Generated report figures and root duplicates
+report_figures*.png
+favicon.png
+logo.png
+
